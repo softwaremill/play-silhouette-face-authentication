@@ -1,8 +1,5 @@
 package controllers
 
-import java.nio.file.Files
-
-import javax.inject.Inject
 import com.mohiva.play.silhouette.api.Authenticator.Implicits._
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
@@ -10,6 +7,7 @@ import com.mohiva.play.silhouette.api.util.{ Clock, Credentials }
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
 import forms.SignInForm
+import javax.inject.Inject
 import models.services.UserService
 import net.ceedubs.ficus.Ficus._
 import org.webjars.play.WebJarsUtil
@@ -60,6 +58,10 @@ class SignInController @Inject() (
     Future.successful(Ok(views.html.signIn(SignInForm.form, socialProviderRegistry)))
   }
 
+  def viewr = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
+    Future.successful(Redirect(routes.SignInController.view()).flashing(Flash(Map("adsfasdf" -> "Asdfasdf"))))
+  }
+
   /**
    * Handles the submitted form.
    *
@@ -68,21 +70,18 @@ class SignInController @Inject() (
   def submit = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
     val fileDataOpt: Option[MultipartFormData[TemporaryFile]] = request.body.asMultipartFormData
     val signInForm = SignInForm.form.bindFromRequest
-    println("Temporary file: " + fileDataOpt)
+    val tempFolderPath = configuration.underlying.getString("facenetTempFolder")
+    println("facent temp foldeR: " + tempFolderPath)
     signInForm.fold(
       form => Future.successful(BadRequest(views.html.signIn(form, socialProviderRegistry))),
       data => {
         val credentials = Credentials(data.email, data.password)
-        println("credentials: " + credentials)
         credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
-          println("authenticated")
           val result = Redirect(routes.ApplicationController.index())
           userService.retrieve(loginInfo).flatMap {
             case Some(user) if !user.activated =>
-              println("user not active")
               Future.successful(Ok(views.html.activateAccount(data.email)))
             case Some(user) =>
-              println("authenticating further")
               val c = configuration.underlying
               silhouette.env.authenticatorService.create(loginInfo).map {
                 case authenticator if data.rememberMe =>
@@ -92,23 +91,20 @@ class SignInController @Inject() (
                     cookieMaxAge = c.getAs[FiniteDuration]("silhouette.authenticator.rememberMe.cookieMaxAge")
                   )
                 case authenticator => authenticator
-              }.zip(FaceUtil.checkFace(fileDataOpt, credentials, user)).flatMap {
+              }.zip(FaceUtil.checkFace(tempFolderPath, fileDataOpt, credentials, user)).flatMap {
                 case (authenticator, true) =>
-                  println("Face match is true")
                   silhouette.env.eventBus.publish(LoginEvent(user, request))
                   silhouette.env.authenticatorService.init(authenticator).flatMap { v =>
                     silhouette.env.authenticatorService.embed(v, result)
                   }
                 case (authenticator, false) =>
-                  println("Face match is false")
-                  Future.failed(new IdentityNotFoundException("Couldn't match user faces"))
+                  Future.failed(new IdentityNotFoundException("Couldn't match user face"))
               }
             case None => Future.failed(new IdentityNotFoundException("Couldn't find user"))
           }
         }.recover {
-          case _: ProviderException =>
-            println("Provider Exception")
-            Redirect(routes.SignInController.view()).flashing("error" -> Messages("invalid.credentials"))
+          case pe: ProviderException =>
+            Redirect(routes.SignInController.view()).flashing(("error", Messages("invalid.credentials").toString + "\n" + pe.getMessage))
         }
       }
     )

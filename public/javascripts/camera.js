@@ -53,7 +53,6 @@ function init() {
 }
 
 function snapshot() {
-    console.log("taking snapshot..");
     // Draws current image from the video element into the canvas
     ctx.drawImage(video, 0,0, canvas.width, canvas.height);
 }
@@ -83,7 +82,9 @@ function uploadSignIn(filename) {
         },
         success: function (result) {
             console.log("RES: " + result);
-            window.location = "/"
+            document.open();
+            document.write(result);
+            document.close();
         },
         error: function (error) {
             onErrorUpload(error);
@@ -142,7 +143,6 @@ function uuidv4() {
 $('#mainForm').one('submit', function(ev) {
     ev.preventDefault();
     var uuid = uuidv4();
-    console.log("form submission");
     snapshot();
     uploadSignUp(uuid);
     stopWebcam();
@@ -152,7 +152,6 @@ $('#mainForm').one('submit', function(ev) {
 $('#loginForm').one('submit', function(ev) {
     ev.preventDefault();
     var uuid = uuidv4();
-    console.log("login form submission");
     snapshot();
     uploadSignIn(uuid);
     stopWebcam();

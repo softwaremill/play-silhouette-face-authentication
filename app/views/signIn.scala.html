@@ -10,7 +10,6 @@
 @(signInForm: Form[Data], socialProviders: SocialProviderRegistry)(implicit request: RequestHeader, messages: Messages, webJarsUtil: WebJarsUtil, assets: AssetsFinder)
 
 @main(messages("sign.in.title")) {
-    asdfasdf2 @request.flash
     <fieldset class="col-md-6 col-md-offset-3">
         <legend>@messages("sign.in.credentials")</legend>
         @helper.form(action = controllers.routes.SignInController.submit(), 'id -> "loginForm") {
