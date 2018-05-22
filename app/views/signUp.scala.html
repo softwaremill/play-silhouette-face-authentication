@@ -1,0 +1,44 @@
+@import play.api.data.Form
+@import play.api.i18n.Messages
+@import play.api.mvc.RequestHeader
+@import org.webjars.play.WebJarsUtil
+@import controllers.AssetsFinder
+@import forms.SignUpForm.Data
+@import b3.inline.fieldConstructor
+
+@(signUpForm: Form[Data])(implicit request: RequestHeader, messages: Messages, webJarsUtil: WebJarsUtil, assets: AssetsFinder)
+
+@moreScripts = {
+
+}
+
+@main(messages("sign.up.title"), None, moreScripts) {
+    <div class="col-md-6 col-md-offset-3 alert alert-info" style="display: none;">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span id="infoText"></span>
+    </div>
+    <fieldset class="col-md-6 col-md-offset-3">
+        <legend>@messages("sign.up.account")</legend>
+        @helper.form(action = controllers.routes.SignUpController.submit(), 'id -> "mainForm") {
+            @helper.CSRF.formField
+            @b3.text(signUpForm("firstName"), '_hiddenLabel -> messages("first.name"), 'placeholder -> messages("first.name"), 'class -> "form-control input-lg")
+            @b3.text(signUpForm("lastName"), '_hiddenLabel -> messages("last.name"), 'placeholder -> messages("last.name"), 'class -> "form-control input-lg")
+            @b3.text(signUpForm("email"), '_hiddenLabel -> messages("email"), 'placeholder -> messages("email"), 'class -> "form-control input-lg")
+            @passwordStrength(signUpForm("password"), '_hiddenLabel -> messages("password"), 'placeholder -> messages("password"), 'class -> "form-control input-lg")
+            <div class="web-cam centered">
+                <video id="video" controls autoplay></video>
+            </div>
+            <canvas style="display: none;" id="myCanvas" width="400" height="350"></canvas>
+            <div class="form-group">
+                <div>
+                    <button id="submit" type="submit" value="submit" class="btn btn-lg btn-primary btn-block">@messages("sign.up")</button>
+                </div>
+            </div>
+            <div class="sign-in-now">
+                <p>@messages("already.a.member") <a href="@controllers.routes.SignInController.view">@messages("sign.in.now")</a></p>
+            </div>
+        }
+    </fieldset>
+
+}
+
