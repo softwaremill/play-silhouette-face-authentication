@@ -65,10 +65,6 @@ def compare2face(img1,img2):
         dist = np.sqrt(np.sum(np.square(np.subtract(face1[0]['embedding'], face2[0]['embedding']))))
         return dist
     return -1
-#
-# path1 = "/home/kris/Pictures/orig-274c4073-55a7-41ff-958b-2f95b0cb8829.png"
-# path2 = "/home/kris/Pictures/signIn-46e76229-1cb4-4869-9dbd-6a3e160b46a8.png"
-# path3 = "/home/kris/Pictures/signIn-2d25c7e2-6349-4598-855c-555ffbffbfc3.png"
 
 def compareFaces():
     img1 = cv2.imread(args.face1)

@@ -71,7 +71,6 @@ class SignInController @Inject() (
     val fileDataOpt: Option[MultipartFormData[TemporaryFile]] = request.body.asMultipartFormData
     val signInForm = SignInForm.form.bindFromRequest
     val tempFolderPath = configuration.underlying.getString("facenetTempFolder")
-    println("facent temp foldeR: " + tempFolderPath)
     signInForm.fold(
       form => Future.successful(BadRequest(views.html.signIn(form, socialProviderRegistry))),
       data => {

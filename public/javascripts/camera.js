@@ -12,20 +12,17 @@ var webcamStream;
 function startWebcam() {
     if (navigator.getUserMedia) {
         navigator.getUserMedia (
-
             // constraints
             {
                 video: true,
                 audio: false
             },
-
             // successCallback
             function(localMediaStream) {
                 video = document.querySelector('video');
                 video.src = window.URL.createObjectURL(localMediaStream);
                 webcamStream = localMediaStream;
             },
-
             // errorCallback
             function(err) {
                 console.log("The following error occured: " + err);

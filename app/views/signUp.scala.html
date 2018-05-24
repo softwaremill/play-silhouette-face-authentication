@@ -25,6 +25,9 @@
             @b3.text(signUpForm("lastName"), '_hiddenLabel -> messages("last.name"), 'placeholder -> messages("last.name"), 'class -> "form-control input-lg")
             @b3.text(signUpForm("email"), '_hiddenLabel -> messages("email"), 'placeholder -> messages("email"), 'class -> "form-control input-lg")
             @passwordStrength(signUpForm("password"), '_hiddenLabel -> messages("password"), 'placeholder -> messages("password"), 'class -> "form-control input-lg")
+
+            <span class="face-info">Try to position your face within the circle below</span>
+
             <div class="web-cam centered">
                 <video id="video" controls autoplay></video>
             </div>

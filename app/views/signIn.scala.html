@@ -12,6 +12,7 @@
 @main(messages("sign.in.title")) {
     <fieldset class="col-md-6 col-md-offset-3">
         <legend>@messages("sign.in.credentials")</legend>
+        <span class="face-info">Try to position your face within the circle below</span>
         @helper.form(action = controllers.routes.SignInController.submit(), 'id -> "loginForm") {
             @helper.CSRF.formField
             <div class="web-cam centered">

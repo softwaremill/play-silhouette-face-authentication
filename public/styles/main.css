@@ -147,8 +147,8 @@ video {
     width: 350px;
 }
 
-/*.centered {*/
-    /*position: fixed; !* or absolute *!*/
-    /*top: 50%;*/
-    /*left: 50%;*/
-/*}*/
+.face-info {
+    padding-left: 133px;
+    color: red;
+    font-size: 80%;
+}
